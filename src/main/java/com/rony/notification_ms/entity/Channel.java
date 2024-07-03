@@ -17,4 +17,28 @@ public class Channel {
     private Long id;
 
     private String description;
+
+    public Channel(Long id, String description) {
+        this.id = id;
+        this.description = description;
+    }
+
+    public enum Values{
+        EMAIL(1, "Email"),
+        SMS(2, "SMS"),
+        PUSH(3, "Push"),
+        WHATSAPP(4, "WhatsApp");
+
+        private long id;
+        private String description;
+
+        Values(long id, String description) {
+            this.id = id;
+            this.description = description;
+        }
+
+        public Channel toChannel(){
+            return new Channel(id, description);
+        }
+    }
 }
