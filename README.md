@@ -14,6 +14,7 @@ Este projeto é um Microserviço de Notificações construído usando Spring Boo
 - **Spring Boot:** Framework para construção do microserviço.
 - **Spring Data JPA:** Para interações com o banco de dados.
 - **Spring Scheduler:** Para execução de tarefas periódicas.
+- **Spring Mail:** Para envio de emails.
 - **MySQL:** Banco de dados para armazenamento de dados de notificações.
 - **Docker:** Para containerizar o banco de dados MySQL.
 
