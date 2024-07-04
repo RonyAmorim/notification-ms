@@ -4,6 +4,8 @@ import com.rony.notification_ms.dto.ScheduleNotificationDTO;
 import com.rony.notification_ms.entity.Notification;
 import com.rony.notification_ms.entity.Status;
 import com.rony.notification_ms.repository.NotificationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,10 +16,14 @@ import java.util.function.Consumer;
 @Service
 public class NotificationService {
 
-    private final NotificationRepository notificationRepository;
+    private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
-    public NotificationService(NotificationRepository notificationRepository) {
+    private final NotificationRepository notificationRepository;
+    private final EmailService emailService;
+
+    public NotificationService(NotificationRepository notificationRepository, EmailService emailService) {
         this.notificationRepository = notificationRepository;
+        this.emailService = emailService;
     }
 
     public void scheduleNotification(ScheduleNotificationDTO dto) {
@@ -47,7 +53,20 @@ public class NotificationService {
 
     private Consumer<Notification> SendNotification() {
         return notification -> {
-            //TODO - Send notification
+            String channelDescription = notification.getChannel().getDescription().toUpperCase();
+            logger.info("Sending notification ID: {} via channel: {}", notification.getId(), channelDescription);
+
+            switch (channelDescription) {
+                case "EMAIL":
+                    emailService.sendEmail(notification.getDestination(), "Teste", notification.getMessage());
+                    break;
+                case "SMS":
+                    // smsService.sendSms(notification.getDestination(), notification.getMessage());
+                    break;
+                default:
+                    logger.error("Channel not supported: {}", channelDescription);
+                    throw new RuntimeException("Channel not supported: " + channelDescription);
+            }
 
             notification.setStatus(Status.Values.SUCCESS.toStatus());
             notificationRepository.save(notification);
